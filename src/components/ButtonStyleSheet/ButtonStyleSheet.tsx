@@ -1,5 +1,5 @@
-import React from 'react';
-import {TouchableOpacity, StyleSheet, Text} from 'react-native';
+import React, {useState} from 'react';
+import {TouchableOpacity, StyleSheet, Text, Animated} from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 
@@ -8,13 +8,34 @@ interface Props {
 }
 
 const ButtonStyleSheet: React.FC<Props> = ({onPress}) => {
-  const color = useSelector((state: RootState) => state.color.buttonColor);
+  const colors = useSelector((state: RootState) => state.color.colors);
+  const [animation] = useState(new Animated.Value(0));
+
+  const onPressButton = () => {
+    onPress();
+    Animated.timing(animation, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: false,
+    }).start(() => {
+      animation.setValue(0);
+    });
+  };
+
+  const interpolatedColor = animation.interpolate({
+    inputRange: [0, 1, 2, 3],
+    outputRange: colors,
+  });
+
+  const animatedStyle = {
+    backgroundColor: interpolatedColor,
+  };
 
   return (
-    <TouchableOpacity
-      style={[styles.button, {backgroundColor: color}]}
-      onPress={onPress}>
-      <Text>Button</Text>
+    <TouchableOpacity onPress={onPressButton}>
+      <Animated.View style={[styles.button, animatedStyle]}>
+        <Text>Button</Text>
+      </Animated.View>
     </TouchableOpacity>
   );
 };

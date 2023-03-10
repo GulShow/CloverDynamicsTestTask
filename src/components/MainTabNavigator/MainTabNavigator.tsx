@@ -4,7 +4,7 @@ import {SecondaryScreen} from '../SecondaryScreen/SecondaryScreen';
 
 const Tab = createBottomTabNavigator();
 
-export const TabNavigator = () => {
+export const MainTabNavigator = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen name="Main" component={MainScreen} />

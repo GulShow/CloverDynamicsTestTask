@@ -1,9 +1,6 @@
-import React from 'react';
-import {StyleSheet, TouchableOpacity, Text} from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-} from 'react-native-reanimated';
+import React, {useState} from 'react';
+import {StyleSheet, TouchableOpacity, Text, Animated} from 'react-native';
+import {SharedValue, useAnimatedStyle} from 'react-native-reanimated';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 
@@ -12,19 +9,31 @@ interface Props {
 }
 
 const ButtonReanimated: React.FC<Props> = ({onPress}) => {
-  const color = useSelector((state: RootState) => state.color.buttonColor);
+  const colors = useSelector((state: RootState) => state.color.colors);
+  const [animation] = useState(new Animated.Value<number>(0));
 
-  const progress = useSharedValue(1);
+  const onPressButton = () => {
+    onPress();
+    Animated.timing(animation, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: false,
+    }).start(() => {
+      animation.setValue(0);
+    });
+  };
 
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      backgroundColor: color,
-      transform: [{scale: progress.value}],
-    };
+  const interpolatedColor = animation.interpolate({
+    inputRange: [0, 1, 2, 3],
+    outputRange: colors,
   });
 
+  const animatedStyle = {
+    backgroundColor: interpolatedColor,
+  };
+
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPressButton}>
       <Animated.View style={[styles.button, animatedStyle]}>
         <Text>Button</Text>
       </Animated.View>

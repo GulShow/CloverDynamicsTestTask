@@ -1,17 +1,19 @@
 import {createSlice} from '@reduxjs/toolkit';
 
-export const colorSlice = createSlice({
+const initialState = {
+  colorIndex: 0,
+  colors: ['#D199E7', '#72C1ED', '#A196F1', '#7D72ED'],
+};
+
+const colorSlice = createSlice({
   name: 'color',
-  initialState: {
-    buttonColor: '#D199E7',
-  },
+  initialState,
   reducers: {
-    changeColor: (state, {payload}) => {
-      state.buttonColor = payload;
+    setButtonColorIndex: state => {
+      state.colorIndex = (state.colorIndex + 1) % 4;
     },
   },
 });
 
-export const {changeColor} = colorSlice.actions;
-
+export const {setButtonColorIndex} = colorSlice.actions;
 export default colorSlice.reducer;
